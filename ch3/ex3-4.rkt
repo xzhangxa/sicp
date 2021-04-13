@@ -1,0 +1,42 @@
+#!/usr/bin/env racket
+
+#lang sicp
+
+(define (call-the-cops)
+  (display "called the cops"))
+
+(define (make-account balance password)
+  (define (withdraw amount)
+    (if (>= balance amount)
+      (begin (set! balance (- balance amount))
+             balance)
+      "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (define passwd-count 0)
+  (define (nop amount) (display "\n"))
+  (define (dispatch passwd m)
+    (if (eq? passwd password)
+      (begin (set! passwd-count 0)
+             (cond ((eq? m 'withdraw) withdraw)
+                   ((eq? m 'deposit) deposit)
+                   (else (error "Unknown request -- MAKE-ACCOUNT" m))))
+      (begin (set! passwd-count (+ passwd-count 1))
+             (if (>= passwd-count 7)
+               (call-the-cops)
+               (display "Incorrect password"))
+             nop)))
+  dispatch)
+
+(define acc (make-account 100 'hello))
+
+((acc 'hello 'withdraw) 40)
+((acc 'world 'deposit) 50)
+((acc 'world 'deposit) 50)
+((acc 'world 'deposit) 50)
+((acc 'world 'deposit) 50)
+((acc 'world 'deposit) 50)
+((acc 'world 'deposit) 50)
+((acc 'world 'deposit) 50)
+((acc 'world 'deposit) 50)
